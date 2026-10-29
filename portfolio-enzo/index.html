@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - Enzo GREGOIRE-BARRAS</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        manitou: {
+                            red: '#E3001B',
+                            dark: '#1a1a1a',
+                            gray: '#f5f5f5',
+                            border: '#e5e7eb'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS for Animations and Specific Styling -->
+    <style>
+        body {
+            background-color: #f9fafb;
+            color: #333;
+        }
+
+        .tab-pane {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+            transform: translateY(15px);
+        }
+
+        .tab-pane.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .nav-btn {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background-color: #E3001B;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-btn.active {
+            color: #E3001B;
+        }
+
+        .nav-btn.active::after {
+            width: 100%;
+        }
+
+        .skill-card:hover .icon-container {
+            background-color: #E3001B;
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .icon-container {
+            transition: all 0.3s ease;
+        }
+
+        /* Animations pour les cartes extensibles (Accordéons) */
+        .card-content {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.3s ease-out, opacity 0.3s ease-out, padding 0.3s ease;
+            opacity: 0;
+            padding: 0 1.5rem;
+        }
+        
+        .card-content.expanded {
+            grid-template-rows: 1fr;
+            opacity: 1;
+            padding-bottom: 1.5rem;
+        }
+
+        .card-inner {
+            overflow: hidden;
+        }
+
+        .chevron-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .chevron-icon.rotate {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans">
+
+    <!-- Header Section -->
+    <header class="bg-manitou-dark text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo Manitou mis à jour -->
+                <div class="flex items-center gap-3">
+                    <div class="bg-white p-1 rounded flex items-center justify-center">
+                        <img src="image_c915e0.png" alt="Logo Manitou" class="h-10 object-contain">
+                    </div>
+                    <span class="hidden md:block text-gray-400 text-sm border-l border-gray-600 pl-3 ml-2">Portfolio Alternance</span>
+                </div>
+                
+                <!-- Name & Quick Contact -->
+                <div class="text-right">
+                    <h1 class="text-xl font-bold tracking-wide">Enzo GREGOIRE-BARRAS</h1>
+                    <p class="text-sm text-gray-400">Étudiant GEII BUT 3</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Bar -->
+        <nav class="bg-white border-b border-gray-200 text-gray-600 shadow-sm overflow-x-auto">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-center sm:justify-start">
+                <ul class="flex space-x-1 sm:space-x-8 min-w-max">
+                    <li>
+                        <button onclick="switchTab('presentation')" id="btn-presentation" class="nav-btn active flex flex-col items-center py-3 px-4 text-sm font-medium hover:text-manitou-red focus:outline-none">
+                            <i class="fas fa-user text-lg mb-1"></i>
+                            <span>Présentation</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="switchTab('concevoir')" id="btn-concevoir" class="nav-btn flex flex-col items-center py-3 px-4 text-sm font-medium hover:text-manitou-red focus:outline-none">
+                            <i class="fas fa-pen-ruler text-lg mb-1"></i>
+                            <span>Concevoir</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="switchTab('maintenir')" id="btn-maintenir" class="nav-btn flex flex-col items-center py-3 px-4 text-sm font-medium hover:text-manitou-red focus:outline-none">
+                            <i class="fas fa-wrench text-lg mb-1"></i>
+                            <span>Maintenir</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="switchTab('verifier')" id="btn-verifier" class="nav-btn flex flex-col items-center py-3 px-4 text-sm font-medium hover:text-manitou-red focus:outline-none">
+                            <i class="fas fa-clipboard-check text-lg mb-1"></i>
+                            <span>Vérifier</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="switchTab('integrer')" id="btn-integrer" class="nav-btn flex flex-col items-center py-3 px-4 text-sm font-medium hover:text-manitou-red focus:outline-none">
+                            <i class="fas fa-puzzle-piece text-lg mb-1"></i>
+                            <span>Intégrer</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
+        
+        <!-- ================= SECTION: PRÉSENTATION ================= -->
+        <section id="tab-presentation" class="tab-pane active">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="md:flex">
+                    <div class="md:w-1/3 bg-manitou-dark text-white p-8 flex flex-col justify-center items-center text-center">
+                        <img src="Capture.PNG" alt="Enzo GREGOIRE-BARRAS" class="w-32 h-32 rounded-full mb-6 border-4 border-manitou-red shadow-lg object-cover">
+                        <h2 class="text-2xl font-bold mb-1">Enzo GREGOIRE-BARRAS</h2>
+                        <h3 class="text-manitou-red font-semibold text-sm mb-4 uppercase tracking-widest">Génie Électrique & Informatique Industrielle</h3>
+                        <p class="text-gray-300 text-sm mb-6">
+                            En alternance chez <strong>Manitou (Ancenis)</strong> depuis 2 ans.
+                        </p>
+                        
+                        <div class="w-full space-y-3 text-left">
+                            <div class="flex items-center text-sm">
+                                <i class="fas fa-envelope w-6 text-manitou-red"></i>
+                                <a href="mailto:enzogregoire814@gmail.com" class="hover:underline">enzogregoire814@gmail.com</a>
+                            </div>
+                            <div class="flex items-center text-sm">
+                                <i class="fas fa-phone w-6 text-manitou-red"></i>
+                                <a href="tel:0649261154" class="hover:underline">06 49 26 11 54</a>
+                            </div>
+                            <div class="flex items-center text-sm">
+                                <i class="fas fa-map-marker-alt w-6 text-manitou-red"></i>
+                                <span>Nantes / Ancenis</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="md:w-2/3 p-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-manitou-red pb-2 inline-block">Profil Professionnel</h3>
+                        <p class="text-gray-600 leading-relaxed mb-8">
+                            Étudiant passionné par le génie électrique et l'informatique industrielle, je suis actuellement en BUT 3. Fort d'une expérience variée dans le domaine agricole et industriel (MECA EXPERT, KUHN AUDUREAU, RENAULT), j'ai su développer une grande capacité d'adaptation et une rigueur technique approfondie lors de mon alternance chez Manitou. Mon objectif est d'optimiser, concevoir et maintenir des systèmes automatisés performants.
+                        </p>
+                        
+                        <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-laptop-code text-manitou-red mr-2"></i> Maîtrise Logicielle
+                        </h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="bg-gray-50 border border-gray-100 p-4 rounded-xl text-center shadow-sm hover:shadow-md transition-shadow">
+                                <i class="fas fa-network-wired text-3xl text-gray-700 mb-2"></i>
+                                <p class="font-semibold text-gray-800">Langage Ladder</p>
+                            </div>
+                            <div class="bg-gray-50 border border-gray-100 p-4 rounded-xl text-center shadow-sm hover:shadow-md transition-shadow">
+                                <i class="fas fa-code text-3xl text-gray-700 mb-2"></i>
+                                <p class="font-semibold text-gray-800">Langage C</p>
+                            </div>
+                            <div class="bg-gray-50 border border-gray-100 p-4 rounded-xl text-center shadow-sm hover:shadow-md transition-shadow">
+                                <i class="fas fa-cube text-3xl text-gray-700 mb-2"></i>
+                                <p class="font-semibold text-gray-800">SolidWorks</p>
+                            </div>
+                            <div class="bg-gray-50 border border-gray-100 p-4 rounded-xl text-center shadow-sm hover:shadow-md transition-shadow">
+                                <i class="fas fa-microchip text-3xl text-gray-700 mb-2"></i>
+                                <p class="font-semibold text-gray-800">Kicad 8</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION: CONCEVOIR ================= -->
+        <section id="tab-concevoir" class="tab-pane">
+            <div class="mb-8 flex items-end justify-between">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-800">Concevoir</h2>
+                    <p class="text-gray-500 mt-2">Définir, dimensionner et concevoir des systèmes et appareillages.</p>
+                </div>
+                <span class="bg-manitou-red text-white text-sm font-bold px-4 py-1 rounded-full shadow-sm">Niveau 3</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+                <!-- Card 1 -->
+                <div class="skill-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-gray-100 flex flex-col">
+                    <button onclick="toggleCard(this)" class="w-full text-left p-6 focus:outline-none flex justify-between items-center group">
+                        <div class="flex items-center gap-4">
+                            <div class="icon-container w-12 h-12 rounded-lg bg-red-50 text-manitou-red flex items-center justify-center text-xl shrink-0 group-hover:bg-manitou-red group-hover:text-white">
+                                <i class="fas fa-file-contract"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-800">Cahiers des charges & Devis</h3>
+                        </div>
+                        <i class="fas fa-chevron-down text-gray-400 chevron-icon"></i>
+                    </button>
+                    <div class="card-content">
+                        <div class="card-inner">
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                Rédaction précise de cahiers des charges fonctionnels. Utilisation d'outils analytiques comme le GRAFSET et les tableurs pour structurer et définir les besoins techniques. Prise de contact directe avec les fournisseurs pour la négociation et la réalisation de devis matériels adaptés au budget alloué.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="skill-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-gray-100 flex flex-col">
+                    <button onclick="toggleCard(this)" class="w-full text-left p-6 focus:outline-none flex justify-between items-center group">
+                        <div class="flex items-center gap-4">
+                            <div class="icon-container w-12 h-12 rounded-lg bg-red-50 text-manitou-red flex items-center justify-center text-xl shrink-0 group-hover:bg-manitou-red group-hover:text-white">
+                                <i class="fas fa-check-double"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-800">Choix technologiques & Normes</h3>
+                        </div>
+                        <i class="fas fa-chevron-down text-gray-400 chevron-icon"></i>
+                    </button>
+                    <div class="card-content">
+                        <div class="card-inner">
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                Sélection rigoureuse de matériels industriels (ex: automates Siemens) en stricte conformité avec les normes CE. Une attention particulière est portée à l'ergonomie pour faciliter les futures interventions de maintenance. Création d'une distinction claire et normée entre le matériel de test et le matériel de production continue.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="skill-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-gray-100 flex flex-col">
+                    <button onclick="toggleCard(this)" class="w-full text-left p-6 focus:outline-none flex justify-between items-center group">
+                        <div class="flex items-center gap-4">
+                            <div class="icon-container w-12 h-12 rounded-lg bg-red-50 text-manitou-red flex items-center justify-center text-xl shrink-0 group-hover:bg-manitou-red group-hover:text-white">
+                                <i class="fas fa-project-diagram"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-800">Dossier de conception</h3>
+                        </div>
+                        <i class="fas fa-chevron-down text-gray-400 chevron-icon"></i>
+                    </button>
+                    <div class="card-content">
+                        <div class="card-inner">
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                Réalisation complète de dossiers de conception incluant les schémas électriques embarqués et industriels. Cette démarche permet d'anticiper les contraintes, de garantir un câblage réussi dès la première itération, et de fournir une documentation claire pour faciliter le dépannage par les techniciens.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION: MAINTENIR ================= -->
+        <section id="tab-maintenir" class="tab-pane">
+            <div class="mb-8 flex items-end justify-between">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-800">Maintenir</h2>
+                    <p class="text-gray-500 mt-2">Assurer le bon fonctionnement et l'évolution des équipements.</p>
+                </div>
+                <div class="flex gap-2">
+                    <span class="bg-gray-200 text-gray-700 text-sm font-bold px-4 py-1 rounded-full shadow-sm">Niveau 1</span>
+                    <span class="bg-manitou-red text-white text-sm font-bold px-4 py-1 rounded-full shadow-sm">Niveau 2</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+                <!-- Card 1 -->
+                <div class="skill-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-gray-100 flex flex-col">
+                    <button onclick="toggleCard(this)" class="w-full text-left p-6 focus:outline-none flex justify-between items-center group">
+                        <div class="flex items-center gap-4">
+                            <div class="icon-container w-12 h-12 rounded-lg bg-red-50 text-manitou-red flex items-center justify-center text-xl shrink-0 group-hover:bg-manitou-red group-hover:text-white">
+                                <i class="fas fa-search-plus"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-800">Contrôle & Réception</h3>
+                        </div>
+                        <i class="fas fa-chevron-down text-gray-400 chevron-icon"></i>
+                    </button>
+                    <div class="card-content">
+                        <div class="card-inner">
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                Vérification minutieuse lors de la réception d'équipements externes. Exécution de procédures strictes pour valider la conductivité de chaque fil, la protection globale et la qualité des faisceaux électriques destinés aux bancs de test, garantissant ainsi le respect absolu du cahier des charges initial.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="skill-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-gray-100 flex flex-col">
+                    <button onclick="toggleCard(this)" class="w-full text-left p-6 focus:outline-none flex justify-between items-center group">
+                        <div class="flex items-center gap-4">
+                            <div class="icon-container w-12 h-12 rounded-lg bg-red-50 text-manitou-red flex items-center justify-center text-xl shrink-0 group-hover:bg-manitou-red group-hover:text-white">
+                                <i class="fas fa-plus-circle"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-800">Maintenance Améliorative</h3>
+                        </div>
+                        <i class="fas fa-chevron-down text-gray-400 chevron-icon"></i>
+                    </button>
+                    <div class="card-content">
+                        <div class="card-inner">
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                Évolution proactive de l'outil de production. Intervention sur les bancs de test pour rajouter de 4 nouvelles prises de connexion, permettant l'accueil de nouveaux faisceaux. Cette adaptation technique est cruciale pour assurer la compatibilité des bancs avec les nouvelles gammes de machines Manitou.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="skill-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-gray-100 flex flex-col">
+                    <button onclick="toggleCard(this)" class="w-full text-left p-6 focus:outline-none flex justify-between items-center group">
+                        <div class="flex items-center gap-4">
+                            <div class="icon-container w-12 h-12 rounded-lg bg-red-50 text-manitou-red flex items-center justify-center text-xl shrink-0 group-hover:bg-manitou-red group-hover:text-white">
+                                <i class="fas fa-tools"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-800">Maintenance Corrective</h3>
+                        </div>
+                        <i class="fas fa-chevron-down text-gray-400 chevron-icon"></i>
+                    </button>
+                    <div class="card-content">
+                        <div class="card-inner">
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                Résolution de problématiques en environnement de production. Face à un problème de lecture intempestive de codes-barres sur le système de gravage de châssis, j'ai reprogrammé et créé des filtres spécifiques pour la douchette. Celle-ci se concentre désormais uniquement sur la détection des 17 caractères requis pour les numéros de série.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION: VÉRIFIER ================= -->
+        <section id="tab-verifier" class="tab-pane">
+            <div class="mb-8 flex items-end justify-between">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-800">Vérifier</h2>
+                    <p class="text-gray-500 mt-2">Mesurer, analyser et certifier le fonctionnement des systèmes.</p>
+                </div>
+                <div class="flex gap-2">
+                    <span class="bg-gray-200 text-gray-700 text-sm font-bold px-4 py-1 rounded-full shadow-sm">Niveau 2</span>
+                    <span class="bg-manitou-red text-white text-sm font-bold px-4 py-1 rounded-full shadow-sm">Niveau 3</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+                <!-- Card 1 -->
+                <div class="skill-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-gray-100 flex flex-col">
+                    <button onclick="toggleCard(this)" class="w-full text-left p-6 focus:outline-none flex justify-between items-center group">
+                        <div class="flex items-center gap-4">
+                            <div class="icon-container w-12 h-12 rounded-lg bg-red-50 text-manitou-red flex items-center justify-center text-xl shrink-0 group-hover:bg-manitou-red group-hover:text-white">
+                                <i class="fas fa-wave-square"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-800">Tests & Mesures</h3>
+                        </div>
+                        <i class="fas fa-chevron-down text-gray-400 chevron-icon"></i>
+                    </button>
+                    <div class="card-content">
+                        <div class="card-inner">
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                Validation rigoureuse du fonctionnement électrique. Contrôle approfondi du câblage d'automates à l'aide de multimètres (mode ohmmètre). Les tests incluent la vérification systématique de toutes les liaisons entre les pôles, l'absence de courts-circuits, et le contrôle de la conductivité terre/neutre selon les régimes établis.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="skill-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-gray-100 flex flex-col">
+                    <button onclick="toggleCard(this)" class="w-full text-left p-6 focus:outline-none flex justify-between items-center group">
+                        <div class="flex items-center gap-4">
+                            <div class="icon-container w-12 h-12 rounded-lg bg-red-50 text-manitou-red flex items-center justify-center text-xl shrink-0 group-hover:bg-manitou-red group-hover:text-white">
+                                <i class="fas fa-certificate"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-800">Certification & Mise en Service</h3>
+                        </div>
+                        <i class="fas fa-chevron-down text-gray-400 chevron-icon"></i>
+                    </button>
+                    <div class="card-content">
+                        <div class="card-inner">
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                Déploiement et homologation de nouveaux équipements industriels. Mise en service de bancs SWS directement sur la ligne de production. Validation de la logique logicielle, comme la vérification de la programmation d'un bras robotique, s'assurant de sa capacité d'évitement d'obstacles en conformité stricte avec son cahier des charges.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="skill-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-gray-100 flex flex-col">
+                    <button onclick="toggleCard(this)" class="w-full text-left p-6 focus:outline-none flex justify-between items-center group">
+                        <div class="flex items-center gap-4">
+                            <div class="icon-container w-12 h-12 rounded-lg bg-red-50 text-manitou-red flex items-center justify-center text-xl shrink-0 group-hover:bg-manitou-red group-hover:text-white">
+                                <i class="fas fa-bug"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-800">Diagnostic de Pannes Complexes</h3>
+                        </div>
+                        <i class="fas fa-chevron-down text-gray-400 chevron-icon"></i>
+                    </button>
+                    <div class="card-content">
+                        <div class="card-inner">
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                Évaluation des causes racines lors de dysfonctionnements critiques. Suite au signalement d'opérateurs ne pouvant plus contrôler une cabine, j'ai mené une analyse logique isolant le problème jusqu'aux faisceaux, détectant finalement la rupture d'un câble d'alimentation interne (invisible sous la gaine) sur le banc de simulation.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION: INTÉGRER ================= -->
+        <section id="tab-integrer" class="tab-pane">
+            <div class="mb-8 flex items-end justify-between">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-800">Intégrer</h2>
+                    <p class="text-gray-500 mt-2">Déployer, communiquer et homologuer les projets sur site.</p>
+                </div>
+                <span class="bg-manitou-red text-white text-sm font-bold px-4 py-1 rounded-full shadow-sm">Niveau 2</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+                <!-- Card 1 -->
+                <div class="skill-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-gray-100 flex flex-col">
+                    <button onclick="toggleCard(this)" class="w-full text-left p-6 focus:outline-none flex justify-between items-center group">
+                        <div class="flex items-center gap-4">
+                            <div class="icon-container w-12 h-12 rounded-lg bg-red-50 text-manitou-red flex items-center justify-center text-xl shrink-0 group-hover:bg-manitou-red group-hover:text-white">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-800">Planification & Gestion</h3>
+                        </div>
+                        <i class="fas fa-chevron-down text-gray-400 chevron-icon"></i>
+                    </button>
+                    <div class="card-content">
+                        <div class="card-inner">
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                Organisation structurée des phases d'installation. Création et suivi de plannings de projet en utilisant la méthode d'amélioration continue PDCA (Plan-Do-Check-Act). Cette rigueur organisationnelle a notamment été appliquée pour la préparation et la future intégration d'un banc d'appairage.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="skill-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-gray-100 flex flex-col">
+                    <button onclick="toggleCard(this)" class="w-full text-left p-6 focus:outline-none flex justify-between items-center group">
+                        <div class="flex items-center gap-4">
+                            <div class="icon-container w-12 h-12 rounded-lg bg-red-50 text-manitou-red flex items-center justify-center text-xl shrink-0 group-hover:bg-manitou-red group-hover:text-white">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-800">Communication Inter-services</h3>
+                        </div>
+                        <i class="fas fa-chevron-down text-gray-400 chevron-icon"></i>
+                    </button>
+                    <div class="card-content">
+                        <div class="card-inner">
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                Rôle de pont entre l'ingénierie et la production. Préparation et animation de réunions de présentation dédiées aux services de production. L'objectif étant de présenter le nouveau projet qui sera installé sur la ligne, d'en expliquer le but technique et de former les utilisateurs finaux à sa manipulation.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="skill-card bg-white rounded-xl shadow-sm hover:shadow-lg transition-all border border-gray-100 flex flex-col">
+                    <button onclick="toggleCard(this)" class="w-full text-left p-6 focus:outline-none flex justify-between items-center group">
+                        <div class="flex items-center gap-4">
+                            <div class="icon-container w-12 h-12 rounded-lg bg-red-50 text-manitou-red flex items-center justify-center text-xl shrink-0 group-hover:bg-manitou-red group-hover:text-white">
+                                <i class="fas fa-stamp"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-800">Homologation & Traçabilité</h3>
+                        </div>
+                        <i class="fas fa-chevron-down text-gray-400 chevron-icon"></i>
+                    </button>
+                    <div class="card-content">
+                        <div class="card-inner">
+                            <p class="text-gray-600 text-sm leading-relaxed">
+                                Gestion administrative et technique des biens de l'entreprise. Avant la mise en service officielle sur la ligne de production, chaque banc se voit attribuer un numéro d'immobilisation unique. Cela assure l'intégration de l'équipement dans le parc machine Manitou et permet de documenter son emplacement pour la maintenance.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-auto py-6">
+        <div class="max-w-7xl mx-auto px-4 text-center text-gray-500 text-sm">
+            &copy; 2026 Enzo GREGOIRE-BARRAS. Portfolio réalisé dans le cadre du BUT 3 GEII.
+        </div>
+    </footer>
+
+    <!-- JavaScript for Tab Switching Logic -->
+    <script>
+        // Fonction pour gérer l'expansion des cartes (Accordéon)
+        function toggleCard(button) {
+            // Trouver le contenu associé à ce bouton
+            const content = button.nextElementSibling;
+            // Trouver l'icône chevron dans ce bouton
+            const icon = button.querySelector('.chevron-icon');
+
+            // Basculer les classes pour l'animation
+            content.classList.toggle('expanded');
+            icon.classList.toggle('rotate');
+        }
+
+        // Fonction pour gérer la navigation entre les onglets
+        function switchTab(tabId) {
+            // Get all tabs and buttons
+            const tabs = document.querySelectorAll('.tab-pane');
+            const buttons = document.querySelectorAll('.nav-btn');
+
+            // Hide all tabs and remove active class from buttons
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Show selected tab and add active class to clicked button
+            const selectedTab = document.getElementById('tab-' + tabId);
+            const clickedBtn = document.getElementById('btn-' + tabId);
+
+            if (selectedTab && clickedBtn) {
+                // Small delay logic to allow display:block to compute before animating opacity
+                selectedTab.style.display = 'block';
+                
+                // Force a reflow to make the transition work
+                void selectedTab.offsetWidth;
+                
+                selectedTab.classList.add('active');
+                clickedBtn.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>
